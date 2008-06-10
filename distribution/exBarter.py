@@ -37,7 +37,7 @@ class BarterAgent(Agent) :
     def findSomethingOtherWants(self, myNeed, mnAmount, other) :
         trade = None        
         for rName in self.getListOfSurpluses() :
-            if other.doYouWant(myNeed, mnAmount, rName, self.getSurplus(rName)) == 1 :
+            if other.doYouWant(myNeed, mnAmount, rName, self.getSurplus(rName)) :
                 trade = rName
                 break
         return trade
