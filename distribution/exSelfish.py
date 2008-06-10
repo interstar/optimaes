@@ -24,4 +24,4 @@ class SelfishExperiment(SelfishGrid) :
 
 
 if __name__ == '__main__' :
-    experiment(SelfishExperiment,10,400,[['food',5,5],['drink',5,5],['love',5,5]],'selfish1.csv')
+    experiment(SelfishExperiment,10,1000,[['food',5,5],['drink',5,5],['love',5,5]],'selfish1.csv')

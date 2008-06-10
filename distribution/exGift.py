@@ -2,6 +2,7 @@ from economy import *
 from grid import *
 from statistics import *
 from experiments import *
+
 class GiftAgent(Agent) :
             
     def findNeighbourWhoMostNeeds(self, rName) :
@@ -51,4 +52,4 @@ class GiftExperiment(GiftGrid) :
 
 
 if __name__ == '__main__' :
-    experiment(GiftExperiment,10,400,[['food',5,5],['drink',5,5],['love',5,5]],'gift1.csv')
+    experiment(GiftExperiment,10,1000,[['food',5,5],['drink',5,5],['love',5,5]],'gift1.csv')

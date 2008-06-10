@@ -13,6 +13,7 @@ def experiment(ExperimentClass,noRuns,noSteps,resources,fName) :
     c = Collector()
     for r in range(noRuns) :
         c.addLine(oneRun(ExperimentClass,noSteps,resources))
-    c.writeAsFile(fName)
+    c = c.rotate()
+    c.writeAsFile(fName,10)
 
 
