@@ -1,5 +1,6 @@
 from economy import *
 from grid import *
+from full import *
 from statistics import *
 from experiments import *
 
@@ -31,25 +32,21 @@ class GiftAgent(Agent) :
                     self.donateTo(neediest, rName, self.getSurplus(rName)) 
          
 GiftGrid = gridMaker(GiftAgent,10,10)
+GiftFull = fullMaker(GiftAgent,100)
 
-class GiftExperiment(GiftGrid) :
-        
+class GiftGridExperiment(experimentMaker(GiftGrid)) :
     def match(self, a) :
         a.lifeStep()
         a.donateToNeediestNeighbours()
-        
         a.testDies()
 
-    def run(self,noSteps,log=lambda x:x) :
-        for step in range(noSteps) :            
-            try :
-                a = self.getRandomLive()
-            except OPTIMAESPopulationDeadException, e :
-                return step # population dead after this number of steps
-            self.match(a)
-            log(self)
-        return step        
-
+class GiftFullExperiment(experimentMaker(GiftFull)) :
+    def match(self, a) :
+        a.lifeStep()
+        a.donateToNeediestNeighbours()
+        a.testDies()
+    
 
 if __name__ == '__main__' :
-    experiment(GiftExperiment,10,1000,[['food',5,5],['drink',5,5],['love',5,5]],'gift1.csv')
+    experiment(GiftGridExperiment,30,1000,resources(),'giftgrid.csv')
+    experiment(GiftFullExperiment,30,1000,resources(),'giftfull.csv')

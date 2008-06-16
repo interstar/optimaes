@@ -135,6 +135,20 @@ class Agent :
     
     def getRRMap(self, name) :
         return self.rrmaps[name]
+    
+    def getListOfNeeds(self) :
+        l = []
+        for rrmap in self.rrmaps.values() :
+            if rrmap.getShortfall() > 0 :
+                l.append(rrmap.name)
+        return l
+
+    def getListOfSurpluses(self) :
+        l = []
+        for rrmap in self.rrmaps.values() :
+            if rrmap.getSurplus() > 0 :
+                l.append(rrmap.name)
+        return l
 
     def getMaxNeed(self) :
         # returns the name and shortfall of the resource with greatest need
@@ -185,19 +199,6 @@ class Agent :
     def getLiveNeighbours(self) :
         return [x for x in self.getHood() if x.isAlive() ]
 
-    def getListOfNeeds(self) :
-        for map in self.rrmaps.values() :
-            if map.getShortfall() > 0 :
-                l.append(map.name)
-        return l
-
-    def getListOfSurpluses(self) :
-        l = []
-        for map in self.rrmaps.values() :
-            if map.getSurplus() > 0 :
-                l.append(map.name)
-        return l
-
     def social(self) :
         pass # does nothing in default agent
     
@@ -233,8 +234,7 @@ class TestRRMap(unittest.TestCase) :
         self.assertEquals(r.getShortfall(),1)
         self.assertEquals(r.getSurplus(),-1)
         
-
-
+        
     def testAgent(self) :
         a = Agent()
         a.addResource("food",5,5)

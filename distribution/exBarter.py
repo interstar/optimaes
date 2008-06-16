@@ -1,23 +1,10 @@
 from economy import *
 from grid import *
+from full import *
 from statistics import *
 from experiments import *
 
 class BarterAgent(Agent) :
-
-    def getListOfNeeds(self) :
-        l = []
-        for rrmap in self.rrmaps.values() :
-            if rrmap.getShortfall() > 0 :
-                l.append(rrmap.name)
-        return l
-
-    def getListOfSurpluses(self) :
-        l = []
-        for rrmap in self.rrmaps.values() :
-            if rrmap.getSurplus() > 0 :
-                l.append(rrmap.name)
-        return l
 
 
     # receive an offer, decide whether to take it
@@ -64,24 +51,22 @@ class BarterAgent(Agent) :
             
 
 BarterGrid = gridMaker(BarterAgent,10,10)
+BarterFull = fullMaker(BarterAgent,100)
 
-class BarterExperiment(BarterGrid) :
-        
+class BarterGridExperiment(experimentMaker(BarterGrid)) :        
     def match(self, a) :
         a.lifeStep()
         a.barterForAllNeeds()        
         a.testDies()
-
-    def run(self,noSteps,log=lambda x:x) :
-        for step in range(noSteps) :            
-            try :
-                a = self.getRandomLive()
-            except OPTIMAESPopulationDeadException, e :
-                return step # population dead after this number of steps
-            self.match(a)
-            log(self)
-        return step        
+        
+class BarterFullExperiment(experimentMaker(BarterFull)) :
+    def match(self, a) :
+        a.lifeStep()
+        a.barterForAllNeeds()        
+        a.testDies()
+    
 
 
 if __name__ == '__main__' :
-    experiment(BarterExperiment,10,1000,[['food',5,5],['drink',5,5],['love',5,5]],'barter1.csv')
+    experiment(BarterGridExperiment,30,1000,resources(),'bartergrid.csv')
+    experiment(BarterFullExperiment,30,1000,resources(),'barterfull.csv')

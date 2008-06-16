@@ -22,6 +22,31 @@ def flatten(xs) :
             b = b + ys
     return b
 
+class WorldMixin :
+    """Mixin for worlds eg. grids ... doesn't stand alone"""
+    def getAlive(self) : return [x for x in self.getAll() if x.isAlive()]
+
+    def getRandom(self) : return choice(self.getAll())
+    
+    def getRandomLive(self) :
+        try : return choice(self.getAlive())
+        except : raise OPTIMAESPopulationDeadException()
+
+    def getRandomPair(self) :
+        a = choice(self.getAll())
+        b = choice(a.getHood())
+        return(a,b)
+
+    def allApply(self,fn) :
+        for x in self.getAll() :
+            fn(x)
+
+    def addResources(self,recs) :
+        for x in self.getAll() :
+            for r in recs :
+                x.addResource(r[0],r[1],r[2])
+
+
 def gridMaker(nodeClass, crows=10, ccols=10) :
 
     class NetNode(nodeClass) :
@@ -33,7 +58,7 @@ def gridMaker(nodeClass, crows=10, ccols=10) :
         def getId(self) : return self.id
         def getHood(self) : return self.hood
 
-    class Grid :
+    class Grid(WorldMixin) :
 
         def __init__(self, rows=crows,cols=ccols) :
             self.grid = [[None]*cols for x in range(rows)]
@@ -64,13 +89,6 @@ def gridMaker(nodeClass, crows=10, ccols=10) :
             return n.hood
 
         def getAll(self) : return flatten(self.grid)
-        def getAlive(self) : return [x for x in self.getAll() if x.isAlive()]
-
-        def getRandom(self) : return choice(self.getAll())
-        
-        def getRandomLive(self) :
-            try : return choice(self.getAlive())
-            except : raise OPTIMAESPopulationDeadException()
                 
         def printMap(self,printFn=None) :
             if printFn == None :
@@ -79,14 +97,6 @@ def gridMaker(nodeClass, crows=10, ccols=10) :
                        print self.getNode(x,y).id,
                     print
                     
-        def getRandomPair(self) :
-            a = choice(self.getAll())
-            b = choice(a.getHood())
-            return(a,b)
-
-        def allApply(self,fn) :
-            for x in self.getAll() :
-                fn(x)
         
         def allMap(self,fn) :
             r2=[]
@@ -94,11 +104,6 @@ def gridMaker(nodeClass, crows=10, ccols=10) :
                 r2.append( [fn(x) for x in r] )
             return r2
         
-        def addResources(self,recs) :
-            for x in self.getAll() :
-                for r in recs :
-                    x.addResource(r[0],r[1],r[2])
-
         
     return Grid
             
