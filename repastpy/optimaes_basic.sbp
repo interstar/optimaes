@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+<!-- Evolver Model Specification File -->
+<RePastEvolver:EvolverModelSpec xmlns:RePastEvolver="http://src.uchicago.edu/simbuilder/">
+<RePastEvolver:EvolverProject  ProjectDirectory="C:\Program Files\Repast 3\Repast Py\output" PackageName="default_package" ProjectName="Environment" ClassPath="" consoleErr="true" consoleOut="true" >
+<Description>
+<![CDATA[
+
+]]>
+</Description>
+<RePastEvolver:EvolverModel  ModelName="GridModel" DisplayName="Grid Model" Class="class uchicago.src.simbuilder.beans.grid.GridModelProducer"  spaceWidth="40" spaceHeight="40" spaceType="Object2DGrid" >
+  <RePastEvolver:action name="initAgents" retType="void" imports="" paramNames="">
+<![CDATA[
+i = 0
+for agent as GridAgent in self.players :
+   agent.alive = 1
+   self.noLive = self.noLive + 1
+   agent.id = i
+   i = i + 1
+   agent.food = 0
+   agent.drink = 0
+   agent.foodGetting = Random.uniform.nextIntFromTo(0,3)
+   agent.drinkGetting = Random.uniform.nextIntFromTo(0,3)
+   agent.color = Color.green
+]]>
+</RePastEvolver:action>
+
+
+<RePastEvolver:parameter name="noLive" type="int" defaultValue="0" probe="false" accessible="true" />
+
+
+<RePastEvolver:schedule order="0 1 2" />
+
+<RePastEvolver:EvolverBean type="Compileable" class="class uchicago.src.simbuilder.beans.grid.GridAgentProducer" name="GridAgent" agentType="Game" 
+  numAgents="1600" groupName="players" location="Random" >
+  <RePastEvolver:action name="step" retType="void" imports="" paramNames="">
+<![CDATA[
+if self.alive == 1 :
+    self.selfStep()
+else :
+    self.rebirth()
+]]>
+</RePastEvolver:action>
+
+  <RePastEvolver:action name="selfStep" retType="void" imports="" paramNames="">
+<![CDATA[
+if self.food < 0 or self.drink < 0 :
+    self.alive = 0
+    self.color = Color.black
+    self.model.noLive = self.model.noLive - 1
+    
+else :
+    self.food = self.food + self.foodGetting
+    self.drink = self.drink + self.drinkGetting
+
+    self.food = self.food - 1
+    self.drink = self.drink - 1
+    
+    #print "agent " + self.id + " food : " + self.food + ", drink : " + self.drink
+]]>
+</RePastEvolver:action>
+
+  <RePastEvolver:action name="rebirth" retType="void" imports="" paramNames="">
+<![CDATA[
+# maybe come back to life
+if Random.uniform.nextIntFromTo(0,50) < 2 :
+    self.alive = 1
+    self.color = Color.green
+    self.foodGetting = Random.uniform.nextIntFromTo(0,3)
+    self.drinkGetting = Random.uniform.nextIntFromTo(0,3)
+    self.model.noLive = self.model.noLive + 1
+]]>
+</RePastEvolver:action>
+
+
+<RePastEvolver:parameter name="food" type="int" defaultValue="" probe="false" accessible="true" />
+<RePastEvolver:parameter name="foodGetting" type="int" defaultValue="" probe="false" accessible="true" />
+<RePastEvolver:parameter name="drink" type="int" defaultValue="" probe="false" accessible="true" />
+<RePastEvolver:parameter name="drinkGetting" type="int" defaultValue="" probe="false" accessible="true" />
+<RePastEvolver:parameter name="id" type="int" defaultValue="" probe="false" accessible="true" />
+<RePastEvolver:parameter name="alive" type="int" defaultValue="" probe="false" accessible="true" />
+
+<RePastEvolver:schedule_item action="step" tick="1" type="1" last="false" target="for all GridAgent" id="0"/>
+
+
+</RePastEvolver:EvolverBean>
+
+
+
+
+<RePastEvolver:EvolverBean type="Component" class="class uchicago.src.simbuilder.beans.grid.GridDisplayProducer" title="OPTIMAES" backgroundColor="0 0 0" >
+<RePastEvolver:schedule_item action="update_display" tick="1" type="1" last="false" target="Grid Display" id="1"/>
+
+</RePastEvolver:EvolverBean>
+<RePastEvolver:EvolverBean type="Component" class="class uchicago.src.simbuilder.beans.DataRecorder" name="dataRecorder" fileName="data.txt" headerComment="" delimiter="," >
+
+
+</RePastEvolver:EvolverBean>
+
+<RePastEvolver:EvolverBean type="Component" class="uchicago.src.simbuilder.beans.SequenceGraph" name="_sequenceGraph" title="Sequence Graph" xAxisTitle="Time"
+ yAxisTitle="no. live" xAxisStart="100.0" yAxisStart="10.0">
+
+
+<RePastEvolver:file_property doWrite="false" fileName="" />
+<RePastEvolver:seqAction name="live" imports="" retVal="double" paramNames="" color="" pointType="-1">
+<![CDATA[
+return self.noLive
+]]>
+</RePastEvolver:seqAction>
+<RePastEvolver:schedule_item action="update" tick="1" type="1" last="false" target="Sequence Graph: _sequenceGraph" id="2"/>
+
+</RePastEvolver:EvolverBean>
+
+
+
+
+
+</RePastEvolver:EvolverModel>
+</RePastEvolver:EvolverProject>
+</RePastEvolver:EvolverModelSpec>
